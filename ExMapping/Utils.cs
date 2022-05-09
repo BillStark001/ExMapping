@@ -82,6 +82,66 @@ namespace ExMapping
         }
         
 
+        public static void ParseSingleLine(
+            string str, 
+            in int lineNumber, 
+            ref DSS context, 
+            ref string? lastKey, 
+            bool allowKeyConflict = true)
+        {
+            while (str.EndsWith('\n') || str.EndsWith('\r'))
+                str = str.Trim('\n').Trim('\r');
+
+            // omit comments or white spaces
+            if (string.IsNullOrWhiteSpace(str) || str.StartsWith('#'))
+                return;
+
+            var newKeyDefinedFlag = false;
+            string? newKey = null;
+            string? newValue = null;
+            if (!str.StartsWith('$') && !str.StartsWith('&'))
+            {
+                var mayBeKey = KeySearchPattern.Match(str).Groups[0];
+                if (mayBeKey.Length == str.Length)
+                {
+                    // do nothing since this line defines no keys
+                }
+                else
+                {
+                    var eqInd = mayBeKey.Length; // it must starts from zero point
+                    newKey = ParseKey(mayBeKey.Value);
+                    newValue = str.Substring(eqInd + 1);
+                    newKeyDefinedFlag = true;
+                }
+            }
+
+            if (newKeyDefinedFlag)
+            {
+                // check conflict
+                if (!allowKeyConflict && context.ContainsKey(newKey!))
+                    throw new InvalidDataException($"Key Conflict: {lastKey} at line {lineNumber}");
+                lastKey = newKey;
+                context[newKey!] = ParseValue(newValue!);
+            }
+            else
+            {
+                var flag1 = lastKey == null;
+                if (lastKey == null)
+                    lastKey = $"#LINE{lineNumber}";
+                var flag2 = !context.ContainsKey(lastKey);
+                if (flag2)
+                    context[lastKey] = "";
+                if (str.StartsWith('$'))
+                    context[lastKey] += "\n" + ParseValue(str.Substring(1));
+                else if (str.StartsWith('&'))
+                    context[lastKey] += ParseValue(str.Substring(1));
+                else if (flag2)
+                    context[lastKey] = ParseValue(str);
+                else
+                    context[lastKey] += "\n" + ParseValue(str);
+            }
+        }
+
         public static DSS Parse(string str, bool allowKeyConflict = true)
         {
             DSS ans = new();
@@ -91,58 +151,7 @@ namespace ExMapping
             {
                 // read and pre-process the current line
                 var s = strs[i];
-                while (s.EndsWith('\n') || s.EndsWith('\r'))
-                    s = s.Trim('\n').Trim('\r');
-
-                // omit comments or white spaces
-                if (string.IsNullOrWhiteSpace(s) || s.StartsWith('#'))
-                    continue;
-
-                var newKeyDefinedFlag = false;
-                string? newKey = null;
-                string? newValue = null;
-                if (!s.StartsWith('$') && !s.StartsWith('&'))
-                {
-                    var mayBeKey = KeySearchPattern.Match(s).Groups[0];
-                    if (mayBeKey.Length == s.Length)
-                    {
-                        // do nothing since this line defines no keys
-                    }
-                    else
-                    {
-                        var eqInd = mayBeKey.Length; // it must starts from zero point
-                        newKey = ParseKey(mayBeKey.Value);
-                        newValue = s.Substring(eqInd + 1);
-                        newKeyDefinedFlag = true;
-                    }
-                }
-
-                if (newKeyDefinedFlag)
-                {
-                    // check conflict
-                    if (!allowKeyConflict && ans.ContainsKey(newKey!))
-                        throw new InvalidDataException($"Key Conflict: {lastKey} at line {i}");
-                    lastKey = newKey;
-                    ans[newKey!] = ParseValue(newValue!);
-                }
-                else
-                {
-                    var flag1 = lastKey == null;
-                    if (lastKey == null)
-                        lastKey = $"#LINE{i}";
-                    var flag2 = !ans.ContainsKey(lastKey);
-                    if (flag2)
-                        ans[lastKey] = "";
-                    if (s.StartsWith('$'))
-                        ans[lastKey] += "\n" + ParseValue(s.Substring(1));
-                    else if (s.StartsWith('&'))
-                        ans[lastKey] += ParseValue(s.Substring(1));
-                    else if (flag2)
-                        ans[lastKey] = ParseValue(s);
-                    else
-                        ans[lastKey] += "\n" + ParseValue(s);
-                }
-
+                ParseSingleLine(s, in i, ref ans, ref lastKey, allowKeyConflict);
             }
             return ans;
         }
