@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace ExMapping
 {
     using DSS = Dictionary<string, string>;
-    public static class Utils
+    public static class FormatUtils
     {
         public delegate bool KF(string? key);
         public delegate void KVF(string? key, string value);
@@ -129,27 +129,6 @@ namespace ExMapping
         }
 
         
-
-        public static string Create(IDictionary<string, string> pairs)
-        {
-            StringBuilder ret = new();
-            foreach (var (key, value) in pairs)
-            {
-
-                // process keys
-                var keyRes = CreateKey(key);
-                ret.Append(keyRes);
-                ret.Append("=");
-                var firstFlag = false;
-                foreach (var v in value.Split('\n'))
-                {
-                    if (!firstFlag)
-                        ret.Append("$");
-                    ret.AppendLine(CreateValue(v));
-                }
-            }
-            return ret.ToString();
-        }
 
     }
 

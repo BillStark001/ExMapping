@@ -55,7 +55,7 @@ namespace ExMapping
             int i = 0;
             while ((line = Reader.ReadLine()) != null)
             {
-                var (k, v) = Utils.ParseLine(line);
+                var (k, v) = FormatUtils.ParseLine(line);
                 if (k is string newKey)
                 {
                     if (_lastKey != null && KeyValuePairParsed != null)

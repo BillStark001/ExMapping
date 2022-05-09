@@ -11,7 +11,7 @@
 		<AssemblyName>ExMapping</AssemblyName>
 		<Authors>Bill Stark</Authors>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Version>0.0.1</Version>
+		<Version>0.0.2</Version>
 	</PropertyGroup>
 
 </Project>

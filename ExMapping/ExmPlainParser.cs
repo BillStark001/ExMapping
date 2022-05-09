@@ -19,7 +19,7 @@ namespace ExMapping
             {
                 // read and pre-process the current line
                 var str = strs[i];
-                var (k, v) = Utils.ParseLine(str);
+                var (k, v) = FormatUtils.ParseLine(str);
                 if (k is string newKey)
                 {
                     string newValue = v!;
