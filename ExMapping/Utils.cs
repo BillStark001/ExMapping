@@ -127,12 +127,18 @@ namespace ExMapping
                 }
                 else
                 {
+                    var flag1 = lastKey == null;
                     if (lastKey == null)
                         lastKey = $"#LINE{i}";
+                    var flag2 = !ans.ContainsKey(lastKey);
+                    if (flag2)
+                        ans[lastKey] = "";
                     if (s.StartsWith('$'))
                         ans[lastKey] += "\n" + ParseValue(s.Substring(1));
                     else if (s.StartsWith('&'))
                         ans[lastKey] += ParseValue(s.Substring(1));
+                    else if (flag2)
+                        ans[lastKey] = ParseValue(s);
                     else
                         ans[lastKey] += "\n" + ParseValue(s);
                 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
@@ -7,6 +7,11 @@
 
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+
+		<AssemblyName>ExMapping</AssemblyName>
+		<Authors>Bill Stark</Authors>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Version>0.0.1</Version>
 	</PropertyGroup>
 
 </Project>
