@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExMapping.Tests", "ExMapping.Tests\ExMapping.Tests.csproj", "{CCBF8BA8-B028-4D5F-8B1A-E058FE06B6BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExMapping", "ExMapping\ExMapping.csproj", "{8F162A94-8069-4DD8-B3B8-1EED3AAB38ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CCBF8BA8-B028-4D5F-8B1A-E058FE06B6BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCBF8BA8-B028-4D5F-8B1A-E058FE06B6BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCBF8BA8-B028-4D5F-8B1A-E058FE06B6BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCBF8BA8-B028-4D5F-8B1A-E058FE06B6BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F162A94-8069-4DD8-B3B8-1EED3AAB38ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F162A94-8069-4DD8-B3B8-1EED3AAB38ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F162A94-8069-4DD8-B3B8-1EED3AAB38ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F162A94-8069-4DD8-B3B8-1EED3AAB38ED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {582EC3B7-0441-498A-BAF9-484235ACB8F3}
+	EndGlobalSection
+EndGlobal
