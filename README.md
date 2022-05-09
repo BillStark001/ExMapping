@@ -78,6 +78,7 @@ parses to
 - As the first character, concatenates the current line **without** a return character to the previous line with a `=`
 - If there is at least one non-space character and no `=` in a line, the line is parsed as `$` concatenated with the line's content
 - When there is no pervious key, a key `$"LINE{i}"` is generated where `i` is the current line number
+    - If the key is previously defined and key conflict is ignored in this case, an incremental key is used (otherwise the value of the key is to be overwritten)
     Example: 
     ```
 

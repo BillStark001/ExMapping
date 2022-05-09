@@ -10,6 +10,9 @@ namespace ExMapping
     using DSS = Dictionary<string, string>;
     public static class Utils
     {
+        public delegate bool KF(string? key);
+        public delegate void KVF(string? key, string value);
+
         public static readonly Regex KeySearchPattern = new Regex(@"(?:\\[nrtbf\\=&$#]|\\u[0-9a-fA-F]{4}|\\x[0-9a-fA-F]{2}|[^=])*");
         public static readonly Regex KeyReplacePattern = new Regex(@"(?:\\[nrtbf\\=&$#]|\\u[0-9a-fA-F]{4}|\\x[0-9a-fA-F]{2}|[^=])");
         public static readonly Regex ValueReplacePattern = new Regex(@"(?:\\[nrtbf\\]|\\u[0-9a-fA-F]{4}|\\x[0-9a-fA-F]{2})");
@@ -82,21 +85,16 @@ namespace ExMapping
         }
         
 
-        public static void ParseSingleLine(
-            string str, 
-            in int lineNumber, 
-            ref DSS context, 
-            ref string? lastKey, 
-            bool allowKeyConflict = true)
+        public static (string?, string?) ParseLine(string str)
         {
             while (str.EndsWith('\n') || str.EndsWith('\r'))
                 str = str.Trim('\n').Trim('\r');
 
             // omit comments or white spaces
             if (string.IsNullOrWhiteSpace(str) || str.StartsWith('#'))
-                return;
+                return (null, null);
 
-            var newKeyDefinedFlag = false;
+            var keyDefinedFlag = false;
             string? newKey = null;
             string? newValue = null;
             if (!str.StartsWith('$') && !str.StartsWith('&'))
@@ -111,50 +109,26 @@ namespace ExMapping
                     var eqInd = mayBeKey.Length; // it must starts from zero point
                     newKey = ParseKey(mayBeKey.Value);
                     newValue = str.Substring(eqInd + 1);
-                    newKeyDefinedFlag = true;
+                    keyDefinedFlag = true;
                 }
             }
 
-            if (newKeyDefinedFlag)
+            if (keyDefinedFlag)
             {
-                // check conflict
-                if (!allowKeyConflict && context.ContainsKey(newKey!))
-                    throw new InvalidDataException($"Key Conflict: {lastKey} at line {lineNumber}");
-                lastKey = newKey;
-                context[newKey!] = ParseValue(newValue!);
+                return (newKey, ParseValue(newValue!));
             }
             else
             {
-                var flag1 = lastKey == null;
-                if (lastKey == null)
-                    lastKey = $"#LINE{lineNumber}";
-                var flag2 = !context.ContainsKey(lastKey);
-                if (flag2)
-                    context[lastKey] = "";
                 if (str.StartsWith('$'))
-                    context[lastKey] += "\n" + ParseValue(str.Substring(1));
+                    return (null, "\n" + ParseValue(str.Substring(1)));
                 else if (str.StartsWith('&'))
-                    context[lastKey] += ParseValue(str.Substring(1));
-                else if (flag2)
-                    context[lastKey] = ParseValue(str);
+                    return (null, ParseValue(str.Substring(1)));
                 else
-                    context[lastKey] += "\n" + ParseValue(str);
+                    return (null, ParseValue(str));
             }
         }
 
-        public static DSS Parse(string str, bool allowKeyConflict = true)
-        {
-            DSS ans = new();
-            var strs = str.Split('\n');
-            string? lastKey = null;
-            for (int i = 0; i < strs.Length; ++i)
-            {
-                // read and pre-process the current line
-                var s = strs[i];
-                ParseSingleLine(s, in i, ref ans, ref lastKey, allowKeyConflict);
-            }
-            return ans;
-        }
+        
 
         public static string Create(IDictionary<string, string> pairs)
         {

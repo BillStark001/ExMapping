@@ -10,7 +10,10 @@ namespace ExMapping.Tests
     public class ParsingTests
     {
 
-        
+        private static DSS Parse(string str)
+        {
+            return ExmPlainParser.Parse(str);
+        }
 
         [TestMethod]
         public void TestTestItself()
@@ -21,7 +24,7 @@ namespace ExMapping.Tests
         [TestMethod]
         public void TestBasicParsing()
         {
-            var map = Utils.Parse(@"
+            var map = Parse(@"
 key1=value1
 key2=value2
 key3!=value4
@@ -42,7 +45,7 @@ $line2
 &continue line2
 $
 ";
-            var outMap = Utils.Parse(inStr);
+            var outMap = Parse(inStr);
             Assert.AreEqual(3, outMap.Count);
             Assert.AreEqual(outMap["a"], "b");
             Assert.AreEqual(outMap["a "], " b");
@@ -62,7 +65,7 @@ path=C:\a\\b\c\d\e\f\m\g
 \#key\\==value
 \#key\=value=value=value
 ";
-            var outMap = Utils.Parse(inStr);
+            var outMap = Parse(inStr);
             Assert.AreEqual(outMap["a"], "\\n");
             Assert.AreEqual(outMap["b"], "\\\n");
             Assert.IsTrue(outMap.ContainsKey("c=\\"));
@@ -76,7 +79,7 @@ path=C:\a\\b\c\d\e\f\m\g
         [TestMethod]
         public void TestLongText()
         {
-            var map = Utils.Parse(@"
+            var map = Parse(@"
 
 
 &        
